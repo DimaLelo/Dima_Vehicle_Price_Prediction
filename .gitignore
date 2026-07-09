@@ -1,0 +1,17 @@
+# Data (raw data excluded for privacy; keep processed/flagged if small enough)
+data/raw/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+
+# Colab upload artifacts
+*.xlsx~
