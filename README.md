@@ -1,3 +1,4 @@
+
 # Predicting Second-Hand Vehicle Prices in Kenya Using Machine Learning
 
 This repository contains the data processing pipeline and machine learning models developed for the research project *"Predicting Second-Hand Vehicle Prices in Kenya Using Data-Driven Machine Learning Techniques"* (Daki Lelo Dima, USIU-Africa, 2026).
@@ -12,7 +13,7 @@ The Kenyan used-car market suffers from information asymmetry and inconsistent p
 
 ## Data
 
-Data was collected from public vehicle listings on Jiji.co.ke and Cheki Kenya. Raw data is not included in this repository for privacy reasons — see `data/README.md` for details.
+Data was collected from public vehicle listings in Kenya. 
 
 | Column | Description |
 |---|---|
@@ -49,24 +50,3 @@ Data was collected from public vehicle listings on Jiji.co.ke and Cheki Kenya. R
 4. **Rare-segment evaluation** — vehicles under a rarity threshold are evaluated separately to check for performance fairness.
 5. **Interpretability** — SHAP values used to explain feature contributions to predicted price.
 
-## Setup
-
-```bash
-git clone https://github.com/<your-username>/vehicle-price-prediction-kenya.git
-cd vehicle-price-prediction-kenya
-pip install -r requirements.txt
-```
-
-Then open `notebooks/Second_Car_Price_Prediction.ipynb` in Jupyter or Google Colab.
-
-## Status
-
-This project is in progress. Current notebook includes data cleaning, feature engineering, and a Linear Regression baseline. Random Forest, XGBoost, MAPE evaluation, rare-segment analysis, and SHAP interpretability are in development.
-
-## Author
-
-Daki Lelo Dima — United States International University – Africa, School of Science and Technology, BSc Data Science and Analytics.
-
-## License
-
-This project is submitted as part of an academic research proposal. All rights reserved per USIU-Africa copyright requirements.
