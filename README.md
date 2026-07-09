@@ -1,7 +1,7 @@
 
 # Predicting Second-Hand Vehicle Prices in Kenya Using Machine Learning
 
-This repository contains the data processing pipeline and machine learning models developed for the research project *"Predicting Second-Hand Vehicle Prices in Kenya Using Data-Driven Machine Learning Techniques"* (Daki Lelo Dima, USIU-Africa, 2026).
+This repository contains the data processing pipeline and machine learning models developed for the research project *"Predicting Second-Hand Vehicle Prices in Kenya Using Data-Driven Machine Learning Techniques"* 
 
 ## Overview
 
