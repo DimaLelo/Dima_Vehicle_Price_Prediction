@@ -1,6 +1,6 @@
 # Predicting Second-Hand Vehicle Prices in Kenya Using Machine Learning
 
-HEAD
+
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Author](#author)
