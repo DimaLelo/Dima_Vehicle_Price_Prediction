@@ -57,11 +57,11 @@ Raw data is not included in this repository; see `data/README.md` for details on
 ## Repository Structure
 
 ```
-├── Second_Car_Price_prediction.ipynb   # main analysis notebook
-├── plots/                              # EDA and result figures
-├── output/                             # flagged rows, model outputs
+├── Second_Car_Price_prediction.ipynb   
+├── plots/                              
+├── output/                             
 ├── docs/
-│   └── progress.md                     # progress log
+│   └── progress.md                     
 ├── requirements.txt
 ├── .gitignore
 └── README.md
