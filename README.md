@@ -13,6 +13,7 @@ This repository contains the data processing pipeline and machine learning model
 - [Methodology](#methodology)
 - [Setup](#setup)
 - [Current Status / Progress Summary](#current-status--progress-summary)
+- [Planned / Future Work](#planned--future-work)
 
 ## Project Overview
 
@@ -30,13 +31,13 @@ Kenya's used-car market has no standardized way to value a vehicle. Prices are s
 
 1. Which vehicle features (mileage, age, county, etc.) have the biggest influence on used car prices in Kenya?
 2. Which machine learning approach — Linear Regression, Random Forest, or XGBoost — predicts Kenyan used car prices most accurately?
-3. Does the model perform equally well for rare vehicle makes/models as it does for common ones?
+3. Does the model perform equally well for rare vehicle makes as it does for common ones?
 
 ## Objectives
 
 1. Identify the vehicle features that most affect price in Kenya, using correlation analysis, Random Forest feature importance, and SHAP values.
-2. Train and compare Linear Regression, Random Forest, and XGBoost, selecting the best model using RMSE and MAPE.
-3. Evaluate whether the model is equally accurate for common and rare vehicle segments, applying rebalancing techniques (sample weighting, SMOTE-NC) where needed.
+2. Train and compare Linear Regression, Random Forest, and XGBoost, selecting the best model using RMSE, MAPE, and R².
+3. Evaluate whether the model is equally accurate for common and rare vehicle segments (makes with under 2% market share).
 
 ## Dataset
 
@@ -50,6 +51,7 @@ Data was collected from public used-vehicle listings on Kenyan online marketplac
 | Used | Condition — Foreign Used / Kenyan Used / Brand New |
 | Transmission | Automatic / Manual / CVT / AMT |
 | Make, Model | Vehicle make and model |
+| Color | Vehicle color |
 | Location | Listing location, parsed down to County |
 
 Raw data is not included in this repository; see `data/README.md` for details on scope and access.
@@ -57,11 +59,11 @@ Raw data is not included in this repository; see `data/README.md` for details on
 ## Repository Structure
 
 ```
-├── Second_Car_Price_prediction.ipynb   
-├── plots/                              
-├── output/                             
+├── Vehicle_Price_Prediction.ipynb   
+├── plots/                           
+├── output/                          
 ├── docs/
-│   └── progress.md                     
+│   └── progress.md                  
 ├── requirements.txt
 ├── .gitignore
 └── README.md
@@ -69,12 +71,12 @@ Raw data is not included in this repository; see `data/README.md` for details on
 
 ## Methodology
 
-1. **Data cleaning** — flag and drop structurally corrupted rows (scraped values shifted into the wrong column) before any parsing; parse `Price`/`Mileage`/`YOM` to numeric; drop rows missing any critical field (Price, Make, Model, YOM, Mileage); cap prices above 10,000,000 KES and winsorize remaining outliers using an IQR fence on the log-price scale; normalize `Condition`, `Transmission`, and `County` text fields.
-2. **Feature engineering** — `Car_Age`, `Mileage_Per_Year`, `Log_Price`, `Log_Mileage`; out-of-fold K-fold target encoding of Make+Model on `Price` to avoid leakage.
-3. **Modeling** — Linear Regression (baseline), Random Forest, and XGBoost compared using RMSE and MAPE; Random Forest tuned via grid search and XGBoost tuned via Bayesian optimization (`skopt`).
-4. **Rare-segment evaluation** — vehicle makes below a 2% market-share threshold are flagged as rare and evaluated separately for performance fairness; sample weighting and SMOTE-NC (with KNN-imputed targets for synthetic rows) are tested as rebalancing techniques.
-5. **Statistical validation** — paired t-test on cross-validated RMSE to check whether the difference between the tuned Random Forest and XGBoost models is statistically significant.
-6. **Interpretability** — correlation analysis, Random Forest feature importances, and SHAP values explain each feature's contribution to predicted price.
+1. **Data cleaning** — remove exact and near-duplicate listings (matched on Make, Model, YOM, Mileage, and Price after normalizing text case); parse `Price`, `Mileage`, and `YOM` to numeric, coercing malformed values to missing; drop rows missing any critical field (Make, Model, YOM, Price, Mileage); restrict to plausible ranges (YOM 1960–2026, Price > 0, Mileage ≥ 0); normalize categorical text fields (Make, Model, Color, Used, Transmission, Location) and fill remaining categorical gaps with `"Unknown"`.
+2. **Feature engineering** — `County` parsed from `Location`; `CarAge` (2026 − YOM); `MileagePerYear`; log-transformed `LogPrice` and `LogMileage` to reduce skew; vehicle makes with under 2% market share flagged as a `RareSegment` for later fairness evaluation.
+3. **Modeling** — categorical features (Make, Model, Color, Used, Transmission, County) one-hot encoded and numeric features median-imputed inside a scikit-learn pipeline. Linear Regression serves as the baseline; Random Forest is tuned via grid search; XGBoost is tuned via randomized search. All three are compared with 5-fold cross-validation on RMSE.
+4. **Evaluation** — final models scored on a held-out test set (stratified by `RareSegment`) using RMSE, MAPE, and R², after transforming predictions back from log scale.
+5. **Rare-segment evaluation** — the best-performing model's MAPE is broken out separately for `Rare` vs. `Common` vehicle makes to check for performance disparities.
+6. **Interpretability** — correlation analysis, Random Forest feature importances, and SHAP values (via `TreeExplainer` on a sample of the training set) explain each feature's contribution to predicted price.
 
 ## Setup
 
@@ -84,16 +86,30 @@ cd Dima_Vehicle_Price_Prediction
 pip install -r requirements.txt
 ```
 
-Then open `Second_Car_Price_prediction.ipynb` in Jupyter or Google Colab.
+Then open `Vehicle_Price_Prediction.ipynb` in Jupyter or Google Colab. Place `Vehicle_Data.xlsx` in the project root before running.
 
 ## Current Status / Progress Summary
 
-- [x] Data cleaning (structural corruption filter, missing values, outlier handling, price capping)
-- [x] Feature engineering (Car_Age, Mileage_Per_Year, log transforms, target encoding)
+- [x] Data cleaning (duplicate removal, missing values, invalid-row filtering)
+- [x] Feature engineering (CarAge, MileagePerYear, log transforms, rare-segment flagging)
 - [x] Linear Regression baseline trained
-- [x] Random Forest model (untuned and tuned)
-- [x] XGBoost model (untuned and tuned)
-- [x] MAPE evaluation alongside RMSE
-- [x] Rare-segment disaggregated evaluation (sample weighting + SMOTE-NC)
+- [x] Random Forest model (untuned and tuned via grid search)
+- [x] XGBoost model (untuned and tuned via randomized search)
+- [x] Model comparison via RMSE, MAPE, and R²
+- [x] Rare-segment disaggregated MAPE evaluation
+- [x] Random Forest feature importance analysis
 - [x] SHAP interpretability analysis
-- [x] Statistical significance test (paired t-test, RF vs. XGBoost)
+- [x] Actual vs. predicted price visualization
+
+Next step: finalize the written report summarizing results and answering the three research questions.
+
+## Planned / Future Work
+
+These techniques are part of the broader research design but are not yet implemented in the current notebook:
+
+- Structural-corruption detection for scraped rows (values shifted into the wrong column) prior to parsing
+- Price capping and IQR-based winsorizing on the log-price scale
+- Out-of-fold K-fold target encoding of Make + Model (in place of one-hot encoding)
+- Bayesian hyperparameter optimization for XGBoost (`skopt`)
+- Rebalancing techniques for rare segments (sample weighting, SMOTE-NC with KNN-imputed targets)
+- Paired t-test on cross-validated RMSE to test whether the Random Forest vs. XGBoost difference is statistically significant
