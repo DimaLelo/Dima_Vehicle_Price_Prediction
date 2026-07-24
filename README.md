@@ -86,7 +86,7 @@ cd Dima_Vehicle_Price_Prediction
 pip install -r requirements.txt
 ```
 
-Then open `Vehicle_Price_Prediction.ipynb` in Jupyter or Google Colab. Place `Vehicle_Data.xlsx` in the project root before running.
+
 
 ## Current Status / Progress Summary
 
@@ -101,15 +101,7 @@ Then open `Vehicle_Price_Prediction.ipynb` in Jupyter or Google Colab. Place `Ve
 - [x] SHAP interpretability analysis
 - [x] Actual vs. predicted price visualization
 
-Next step: finalize the written report summarizing results and answering the three research questions.
+
 
 ## Planned / Future Work
 
-These techniques are part of the broader research design but are not yet implemented in the current notebook:
-
-- Structural-corruption detection for scraped rows (values shifted into the wrong column) prior to parsing
-- Price capping and IQR-based winsorizing on the log-price scale
-- Out-of-fold K-fold target encoding of Make + Model (in place of one-hot encoding)
-- Bayesian hyperparameter optimization for XGBoost (`skopt`)
-- Rebalancing techniques for rare segments (sample weighting, SMOTE-NC with KNN-imputed targets)
-- Paired t-test on cross-validated RMSE to test whether the Random Forest vs. XGBoost difference is statistically significant
