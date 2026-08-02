@@ -69,14 +69,7 @@ Raw data is not included in this repository; see `data/README.md` for details on
 └── README.md
 ```
 
-## Methodology
-
-1. **Data cleaning** — remove exact and near-duplicate listings (matched on Make, Model, YOM, Mileage, and Price after normalizing text case); parse `Price`, `Mileage`, and `YOM` to numeric, coercing malformed values to missing; drop rows missing any critical field (Make, Model, YOM, Price, Mileage); restrict to plausible ranges (YOM 1960–2026, Price > 0, Mileage ≥ 0); normalize categorical text fields (Make, Model, Color, Used, Transmission, Location) and fill remaining categorical gaps with `"Unknown"`.
-2. **Feature engineering** — `County` parsed from `Location`; `CarAge` (2026 − YOM); `MileagePerYear`; log-transformed `LogPrice` and `LogMileage` to reduce skew; vehicle makes with under 2% market share flagged as a `RareSegment` for later fairness evaluation.
-3. **Modeling** — categorical features (Make, Model, Color, Used, Transmission, County) one-hot encoded and numeric features median-imputed inside a scikit-learn pipeline. Linear Regression serves as the baseline; Random Forest is tuned via grid search; XGBoost is tuned via randomized search. All three are compared with 5-fold cross-validation on RMSE.
-4. **Evaluation** — final models scored on a held-out test set (stratified by `RareSegment`) using RMSE, MAPE, and R², after transforming predictions back from log scale.
-5. **Rare-segment evaluation** — the best-performing model's MAPE is broken out separately for `Rare` vs. `Common` vehicle makes to check for performance disparities.
-6. **Interpretability** — correlation analysis, Random Forest feature importances, and SHAP values (via `TreeExplainer` on a sample of the training set) explain each feature's contribution to predicted price.
+.
 
 ## Setup
 
@@ -88,20 +81,4 @@ pip install -r requirements.txt
 
 
 
-## Current Status / Progress Summary
-
-- [x] Data cleaning (duplicate removal, missing values, invalid-row filtering)
-- [x] Feature engineering (CarAge, MileagePerYear, log transforms, rare-segment flagging)
-- [x] Linear Regression baseline trained
-- [x] Random Forest model (untuned and tuned via grid search)
-- [x] XGBoost model (untuned and tuned via randomized search)
-- [x] Model comparison via RMSE, MAPE, and R²
-- [x] Rare-segment disaggregated MAPE evaluation
-- [x] Random Forest feature importance analysis
-- [x] SHAP interpretability analysis
-- [x] Actual vs. predicted price visualization
-
-
-
-## Planned / Future Work
 
