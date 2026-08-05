@@ -1,13 +1,7 @@
-streamlit
-numpy
+streamlit==1.61.0
 pandas
-matplotlib
-seaborn
-scipy
+numpy
 scikit-learn
 xgboost
-shap
-imbalanced-learn
-scikit-optimize
-openpyxl
 joblib
+starlette<1.0.0
