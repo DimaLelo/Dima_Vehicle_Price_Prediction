@@ -1,3 +1,4 @@
+streamlit
 numpy
 pandas
 matplotlib
@@ -9,3 +10,4 @@ shap
 imbalanced-learn
 scikit-optimize
 openpyxl
+joblib
