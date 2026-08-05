@@ -1,7 +1,5 @@
-streamlit==1.61.0
-pandas
-numpy
-scikit-learn
-xgboost
-joblib
-starlette<1.0.0
+scikit-learn==1.6.1
+pandas==2.2.2
+numpy==2.0.2
+xgboost==3.3.0
+joblib==1.5.3
