@@ -161,8 +161,7 @@ The app will open at `http://localhost:8501`.
 - Add confidence intervals around point predictions
 
 ## Author
-**<Dima Daki>**
-📧 <daksilel@gmail.com>
+**<Dima Daki>**📧 <daksilel@gmail.com>
 
 ## Acknowledgments
 
