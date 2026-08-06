@@ -46,6 +46,11 @@ st.markdown(
     .stApp{
         background:
             radial-gradient(circle at 15% 0%, #1c2528 0%, transparent 45%),
+            repeating-linear-gradient(
+                115deg,
+                #ffffff05 0px, #ffffff05 1px,
+                transparent 1px, transparent 34px
+            ),
             var(--bg);
     }
 
@@ -57,12 +62,29 @@ st.markdown(
 
     h1{
         font-weight: 700 !important;
-        color: var(--text) !important;
+        font-size: clamp(1.8rem, 4vw, 2.4rem) !important;
+        background: linear-gradient(100deg, var(--text) 35%, var(--accent) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
     h1 + div p{
         color: var(--text-muted) !important;
         font-size: 1.02rem !important;
+    }
+
+    .hero-badge{
+        display: inline-block;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.16em;
+        color: var(--accent);
+        background: var(--accent-soft);
+        border: 1px solid var(--accent);
+        border-radius: 999px;
+        padding: 0.25rem 0.7rem;
+        margin-bottom: 0.7rem;
     }
 
     /* section headings styled with a left tick, like a route marker */
@@ -129,6 +151,34 @@ st.markdown(
         font-weight: 500 !important;
     }
 
+    /* dropdown popover (select options list) — not covered by the
+       closed-state selector since it renders in a portal */
+    ul[data-baseweb="menu"]{
+        background-color: var(--surface) !important;
+        border: 1px solid var(--border) !important;
+    }
+    ul[data-baseweb="menu"] li{
+        color: var(--text) !important;
+        font-family: 'Inter', sans-serif !important;
+    }
+    ul[data-baseweb="menu"] li:hover,
+    ul[data-baseweb="menu"] li[aria-selected="true"]{
+        background-color: var(--accent-2-soft) !important;
+    }
+
+    /* number input steppers */
+    button[data-testid="stNumberInputStepUp"],
+    button[data-testid="stNumberInputStepDown"]{
+        background-color: var(--surface-2) !important;
+        border-color: var(--border) !important;
+        color: var(--text) !important;
+    }
+    button[data-testid="stNumberInputStepUp"]:hover,
+    button[data-testid="stNumberInputStepDown"]:hover{
+        border-color: var(--accent) !important;
+        color: var(--accent) !important;
+    }
+
     /* primary button */
     div[data-testid="stButton"] button[kind="primary"]{
         background: var(--accent) !important;
@@ -180,7 +230,7 @@ st.markdown(
     }
     .price-value{
         font-family: 'JetBrains Mono', monospace;
-        font-size: 2.4rem;
+        font-size: clamp(1.7rem, 6vw, 2.4rem);
         font-weight: 600;
         color: var(--accent);
         margin-top: 0.2rem;
@@ -235,6 +285,8 @@ global_mean = encoding_data["global_mean"]
 
 
 # PAGE TITLE
+
+st.markdown('<span class="hero-badge">NAIROBI · KES PRICING MODEL</span>', unsafe_allow_html=True)
 
 st.title("🚗 Kenya Used Car Price Predictor")
 
