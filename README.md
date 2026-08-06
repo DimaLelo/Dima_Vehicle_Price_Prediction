@@ -6,9 +6,9 @@ An end-to-end machine learning pipeline that estimates fair market prices for us
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**🔗 Live App:** https://dimavehiclepriceprediction-mtn2sld8vphnzpwszk9xcw.streamlit.app/
+**Live App:** https://dimavehiclepriceprediction-mtn2sld8vphnzpwszk9xcw.streamlit.app/
 
-## 📌 Problem Statement
+##  Problem Statement
 Kenya's used-vehicle market is dominated by second-hand imports, but pricing remains largely informal and negotiation-driven — there is no shared, data-backed benchmark for what a given vehicle is actually worth. This leads to:
 
 - **Information asymmetry** — sellers and buyers each anchor on different, often unfounded, price expectations
@@ -17,14 +17,14 @@ Kenya's used-vehicle market is dominated by second-hand imports, but pricing rem
 
 This project delivers a model that predicts vehicle prices with ~13.84% MAPE, providing a transparent anchor for negotiation and lending decisions.
 
-## 🎯 Key Features
+##  Key Features
 - **End-to-end pipeline** — from raw data cleaning to a deployed Streamlit app
 - **Three-model comparison** — Linear Regression, Random Forest, and XGBoost, with hyperparameter tuning
 - **Rare-segment fairness** — explicit evaluation and correction for underrepresented vehicle makes (e.g., Porsche, Land Rover, Jaguar) using SMOTE-NC and sample weighting
 - **Interpretable AI** — SHAP values confirm predictions are driven by economically sensible features (mileage, age, make-model)
 - **Production deployment** — interactive web app with real-time feature engineering and input validation
 
-## 📊 Results at a Glance
+##  Results at a Glance
 | Model | RMSE (KES) | MAPE |
 |---|---:|---:|
 | **XGBoost + SMOTE-NC** ⭐ | **526,613** | **13.84%** |
@@ -41,7 +41,7 @@ This project delivers a model that predicts vehicle prices with ~13.84% MAPE, pr
 
 ⭐ Selected model achieves the lowest overall MAPE and is deployed in the live app. SMOTE-NC narrows the rare-segment error gap but does not fully eliminate it.
 
-## 🏗️ Project Structure
+##  Project Structure
 ```
 .
 ├── Second_Car_Price_Prediction.ipynb   # Full pipeline: cleaning → modeling → export
@@ -54,7 +54,7 @@ This project delivers a model that predicts vehicle prices with ~13.84% MAPE, pr
 ```
 **Note on artifacts:** The `.pkl` files are exported from the notebook after training. Do not retrain unless you intend to modify the modeling approach.
 
-## 📁 Dataset
+##  Dataset
 | Property | Value |
 |---|---|
 | Source | Kenya Cars on Sale (Kaggle) |
@@ -63,7 +63,7 @@ This project delivers a model that predicts vehicle prices with ~13.84% MAPE, pr
 | Features | Price, Make, Model, YOM, Condition, Transmission, Mileage, Location, Color |
 | Price type | Asking prices (not confirmed transaction values) |
 
-## ⚙️ Methodology
+##  Methodology
 
 **1. Data Cleaning**
 - Removed 7,549 duplicate listings
@@ -95,7 +95,7 @@ Vehicle makes representing under 2% of listings (Land Rover, Audi, Lexus, Ford, 
 **5. Interpretability**
 SHAP (`TreeExplainer`) values computed on the tuned XGBoost model confirm that predictions are driven by mileage, vehicle age, and make-model — economically rational features rather than spurious correlations.
 
-## 🚀 How to Run Locally
+##  How to Run Locally
 
 **1. Clone the repository**
 ```bash
@@ -126,7 +126,7 @@ streamlit run app.py
 ```
 The app opens at `http://localhost:8501`.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 | Category | Technologies |
 |---|---|
 | Language | Python 3.10+ |
@@ -137,13 +137,13 @@ The app opens at `http://localhost:8501`.
 | Deployment | Streamlit, Streamlit Community Cloud |
 | Serialization | joblib |
 
-## ⚠️ Limitations
+## Limitations
 - **Asking prices only** — the dataset reflects listing prices, not confirmed transaction values
 - **Unverified provenance** — the underlying platforms and dealers sourcing the listings are undisclosed
 - **Rare-segment error** — predictions for uncommon makes remain less accurate (18.58% MAPE vs. 13.48% for common makes)
 - **Limited condition data** — no accident history, service records, or mechanical inspection data
 
-## 🔮 Future Work
+##  Future Work
 - Integrate transaction-level data from dealerships and marketplaces
 - Add equipment/trim-level features (sunroof, leather seats, infotainment)
 - Expand geographic coverage to rural and semi-urban counties
@@ -151,14 +151,11 @@ The app opens at `http://localhost:8501`.
 - Explore deep learning architectures (entity embeddings, stacking ensembles)
 - Add prediction confidence intervals to the app output
 
-## 📄 License
+##  License
 This project is licensed under the MIT License — see the `LICENSE` file for details.
 
-## 👤 Author
+##  Author
 **Daki Lelo Dima**
 📧 daksilel@gmail.com
 🔗 [GitHub](https://github.com/DimaLelo)
 
-## 🙏 Acknowledgments
-- Dataset: [Kenya Cars on Sale](https://www.kaggle.com/datasets/rukwarop/kenya-cars-on-sale) by rukwarop (Kaggle)
-- Built with [Streamlit](https://streamlit.io/) and [XGBoost](https://xgboost.readthedocs.io/)
