@@ -15,6 +15,196 @@ st.set_page_config(
 
 
 
+# VISUAL IDENTITY — "NAIROBI DUSK"
+# Palette: deep charcoal-teal ground, marigold amber signal,
+# savanna-teal secondary, warm cream text. A dashed road-line
+# is the signature motif, standing in for dividers throughout.
+
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap');
+
+    :root{
+        --bg:            #12181a;
+        --surface:       #1a2225;
+        --surface-2:     #212b2e;
+        --border:        #2c3639;
+        --text:          #f2eee4;
+        --text-muted:    #93a3a1;
+        --accent:        #e8a33d;
+        --accent-soft:   #e8a33d33;
+        --accent-2:      #2f8f7a;
+        --accent-2-soft: #2f8f7a2e;
+    }
+
+    html, body, [class*="css"]{
+        font-family: 'Inter', sans-serif;
+        color: var(--text);
+    }
+
+    .stApp{
+        background:
+            radial-gradient(circle at 15% 0%, #1c2528 0%, transparent 45%),
+            var(--bg);
+    }
+
+    /* headings use the display face */
+    h1, h2, h3{
+        font-family: 'Space Grotesk', sans-serif !important;
+        letter-spacing: -0.01em;
+    }
+
+    h1{
+        font-weight: 700 !important;
+        color: var(--text) !important;
+    }
+
+    h1 + div p{
+        color: var(--text-muted) !important;
+        font-size: 1.02rem !important;
+    }
+
+    /* section headings styled with a left tick, like a route marker */
+    h2, h3{
+        font-weight: 600 !important;
+        padding-left: 0.7rem;
+        border-left: 3px solid var(--accent);
+        margin-top: 1.6rem !important;
+    }
+
+    /* signature: dashed road-line divider, replacing st.divider() */
+    hr{
+        border: none !important;
+        height: 0 !important;
+        margin: 1.6rem 0 !important;
+        background: none !important;
+        position: relative;
+    }
+    hr::before{
+        content: "";
+        display: block;
+        height: 2px;
+        background-image: repeating-linear-gradient(
+            90deg,
+            var(--accent) 0px, var(--accent) 10px,
+            transparent 10px, transparent 20px
+        );
+        opacity: 0.55;
+    }
+
+    /* eyebrow tag helper */
+    .eyebrow{
+        display: inline-block;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        color: var(--accent-2);
+        background: var(--accent-2-soft);
+        border: 1px solid var(--accent-2);
+        border-radius: 4px;
+        padding: 0.15rem 0.5rem;
+        margin-bottom: 0.4rem;
+    }
+
+    /* inputs */
+    div[data-testid="stTextInput"] input,
+    div[data-testid="stNumberInput"] input,
+    div[data-baseweb="select"] > div{
+        background-color: var(--surface) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 8px !important;
+        color: var(--text) !important;
+    }
+
+    div[data-testid="stTextInput"] input:focus,
+    div[data-testid="stNumberInput"] input:focus{
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 1px var(--accent) !important;
+    }
+
+    label[data-testid="stWidgetLabel"] p{
+        color: var(--text-muted) !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+    }
+
+    /* primary button */
+    div[data-testid="stButton"] button[kind="primary"]{
+        background: var(--accent) !important;
+        color: #191008 !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        letter-spacing: 0.01em;
+        padding: 0.65rem 0 !important;
+        transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+    div[data-testid="stButton"] button[kind="primary"]:hover{
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px var(--accent-soft);
+    }
+
+    /* result banner */
+    div[data-testid="stAlertContentSuccess"]{
+        background: var(--accent-2-soft) !important;
+        border: 1px solid var(--accent-2) !important;
+        border-radius: 10px !important;
+    }
+    div[data-testid="stAlertContentInfo"]{
+        background: var(--surface-2) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 10px !important;
+    }
+    div[data-testid="stAlertContentWarning"],
+    div[data-testid="stAlertContentError"]{
+        border-radius: 10px !important;
+    }
+
+    /* price display card */
+    .price-card{
+        background: var(--surface);
+        border: 1px solid var(--accent);
+        border-radius: 12px;
+        padding: 1.4rem 1.6rem;
+        margin: 0.6rem 0 1rem 0;
+        animation: rise 0.35s ease;
+    }
+    .price-label{
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        letter-spacing: 0.14em;
+        color: var(--text-muted);
+        text-transform: uppercase;
+    }
+    .price-value{
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 2.4rem;
+        font-weight: 600;
+        color: var(--accent);
+        margin-top: 0.2rem;
+    }
+    @keyframes rise{
+        from{ opacity: 0; transform: translateY(6px); }
+        to{ opacity: 1; transform: translateY(0); }
+    }
+
+    /* summary card */
+    .detail-card{
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem 1.2rem;
+    }
+    .detail-card p{ margin-bottom: 0.35rem !important; }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+
 # LOAD TRAINED MODEL AND PREPROCESSING FILES
 
 @st.cache_resource
@@ -53,45 +243,48 @@ st.write(
     "its selling price in Kenyan Shillings (KES)."
 )
 
-st.divider()
+st.markdown("<hr>", unsafe_allow_html=True)
 
 
 
 # VEHICLE INFORMATION
 
-
+st.markdown('<span class="eyebrow">STEP · IDENTIFY THE CAR</span>', unsafe_allow_html=True)
 st.subheader("Vehicle Information")
 
+col_a, col_b = st.columns(2)
 
-make = st.text_input(
-    "Car Make",
-    placeholder="e.g. Toyota"
-)
+with col_a:
+    make = st.text_input(
+        "Car Make",
+        placeholder="e.g. Toyota"
+    )
 
+with col_b:
+    model_name = st.text_input(
+        "Car Model",
+        placeholder="e.g. Corolla"
+    )
 
-model_name = st.text_input(
-    "Car Model",
-    placeholder="e.g. Corolla"
-)
+col_c, col_d = st.columns(2)
 
+with col_c:
+    condition = st.selectbox(
+        "Condition",
+        [
+            "Foreign Used",
+            "Local Used",
+        ]
+    )
 
-condition = st.selectbox(
-    "Condition",
-    [
-        "Foreign Used",
-        "Local Used",
-    ]
-)
-
-
-transmission = st.selectbox(
-    "Transmission",
-    [
-        "Automatic",
-        "Manual"
-    ]
-)
-
+with col_d:
+    transmission = st.selectbox(
+        "Transmission",
+        [
+            "Automatic",
+            "Manual"
+        ]
+    )
 
 county = st.text_input(
     "County",
@@ -102,29 +295,31 @@ county = st.text_input(
 
 # VEHICLE AGE AND MILEAGE
 
-
+st.markdown('<span class="eyebrow">STEP · USAGE DETAILS</span>', unsafe_allow_html=True)
 st.subheader("Vehicle Details")
 
+col_e, col_f = st.columns(2)
 
-yom = st.number_input(
-    "Year of Manufacture",
-    min_value=1960,
-    max_value=2026,
-    value=2018,
-    step=1
-)
+with col_e:
+    yom = st.number_input(
+        "Year of Manufacture",
+        min_value=1960,
+        max_value=2026,
+        value=2018,
+        step=1
+    )
+
+with col_f:
+    mileage = st.number_input(
+        "Mileage (km)",
+        min_value=0,
+        max_value=1000000,
+        value=80000,
+        step=1000
+    )
 
 
-mileage = st.number_input(
-    "Mileage (km)",
-    min_value=0,
-    max_value=1000000,
-    value=80000,
-    step=1000
-)
-
-
-st.divider()
+st.markdown("<hr>", unsafe_allow_html=True)
 
 
 
@@ -303,56 +498,54 @@ if st.button(
         predicted_price = 0
    
     # DISPLAY PREDICTION
-    
-    st.success(
-        f"Estimated Vehicle Price: "
-        f"KES {predicted_price:,.0f}"
+
+    st.markdown(
+        f"""
+        <div class="price-card">
+            <div class="price-label">Estimated Selling Price</div>
+            <div class="price-value">KES {predicted_price:,.0f}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
 
     # SHOW INPUT SUMMARY
     
 
-    st.divider()
+    st.markdown("<hr>", unsafe_allow_html=True)
 
+    st.markdown('<span class="eyebrow">SUMMARY</span>', unsafe_allow_html=True)
     st.subheader("Prediction Details")
 
     col1, col2 = st.columns(2)
 
     with col1:
 
-        st.write(
-            f"**Make:** {make_clean}"
-        )
-
-        st.write(
-            f"**Model:** {model_clean}"
-        )
-
-        st.write(
-            f"**Condition:** {condition}"
-        )
-
-        st.write(
-            f"**Transmission:** {transmission}"
+        st.markdown(
+            f"""
+            <div class="detail-card">
+                <p><b>Make:</b> {make_clean}</p>
+                <p><b>Model:</b> {model_clean}</p>
+                <p><b>Condition:</b> {condition}</p>
+                <p><b>Transmission:</b> {transmission}</p>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
 
     with col2:
 
-        st.write(
-            f"**County:** {county.strip()}"
-        )
-
-        st.write(
-            f"**Year:** {yom}"
-        )
-
-        st.write(
-            f"**Mileage:** {mileage:,.0f} km"
-        )
-
-        st.write(
-            f"**Vehicle Age:** {car_age} years"
+        st.markdown(
+            f"""
+            <div class="detail-card">
+                <p><b>County:</b> {county.strip()}</p>
+                <p><b>Year:</b> {yom}</p>
+                <p><b>Mileage:</b> {mileage:,.0f} km</p>
+                <p><b>Vehicle Age:</b> {car_age} years</p>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
 
 
