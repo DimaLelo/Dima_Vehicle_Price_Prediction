@@ -160,5 +160,5 @@ This project is licensed under the MIT License — see the `LICENSE` file for de
 ##  Author
 **Daki Lelo Dima**
 📧 daksilel@gmail.com
-🔗 [GitHub](https://github.com/DimaLelo)
+
 
