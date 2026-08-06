@@ -44,13 +44,16 @@ This project delivers a model that predicts vehicle prices with ~13.84% MAPE, pr
 ##  Project Structure
 ```
 .
+├── Screenshots/                        # App screenshots for the README
 ├── Second_Car_Price_Prediction.ipynb   # Full pipeline: cleaning → modeling → export
+├── Research_Proposal.pdf               # Project research proposal
 ├── app.py                              # Streamlit deployment app
 ├── vehicle_price_model.pkl             # Trained XGBoost model (exported from notebook)
 ├── vehicle_preprocessor.pkl            # Fitted preprocessing pipeline
 ├── make_model_encoding.pkl             # Target-encoded Make+Model lookup table
 ├── requirements.txt                    # Python dependencies
-└── README.md
+├── .gitignore                          # Files/folders excluded from version control
+└── README.md                           # Project overview and usage instructions
 ```
 **Note on artifacts:** The `.pkl` files are exported from the notebook after training. Do not retrain unless you intend to modify the modeling approach.
 
