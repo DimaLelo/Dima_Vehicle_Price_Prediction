@@ -1,173 +1,165 @@
-# Predicting Second-Hand Vehicle Prices in Kenya Using Machine Learning
+🚗 Predicting Second-Hand Vehicle Prices in Kenya Using Machine Learning
+An end-to-end machine learning pipeline that estimates fair market prices for used vehicles in Kenya. This project addresses the severe information asymmetry in Kenya's informal used-car market by providing a transparent, data-driven valuation tool.
 
-This repository contains the data processing pipeline and machine learning models developed for the research project *"Predicting Second-Hand Vehicle Prices in Kenya Using Data-Driven Machine Learning Techniques."*
+[
+[
+[
 
+🔗 Live App: https://dimavehiclepriceprediction-mtn2sld8vphnzpwszk9xcw.streamlit.app/
 
+📌 Problem Statement
+Kenya's used-vehicle market is valued at over USD 1.3 billion, yet pricing remains largely informal and negotiation-driven. Buyers and sellers lack access to a shared, data-backed benchmark for vehicle valuation, leading to:
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://dimavehiclepriceprediction-mtn2sld8vphnzpwszk9xcw.streamlit.app/)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+Information asymmetry — sellers often list vehicles above market value
 
-**🔗 Live app:** https://dimavehiclepriceprediction-mtn2sld8vphnzpwszk9xcw.streamlit.app/
+Valuation errors — financial institutions face elevated loan default rates due to inaccurate collateral assessment
 
----
+Market inefficiency — prolonged negotiation times and mistrust between parties
 
-## Overview
+This project delivers a production-ready ML model that predicts vehicle prices with ~13% MAPE, providing a transparent anchor for negotiation and lending decisions.
 
-Kenya's used-vehicle market is dominated by second-hand imports, but pricing is largely informal and negotiation-driven — there is no shared, data-backed benchmark for what a given car is actually worth. This project builds an end-to-end pipeline that:
+🎯 Key Features
+End-to-end pipeline — from raw data cleaning to deployed Streamlit app
 
-1. Cleans and engineers features from a raw dataset of ~46,700 Kenyan vehicle listings
-2. Trains and compares Linear Regression, Random Forest, and XGBoost regressors
-3. Tunes the top models (Grid Search / Bayesian optimization) and evaluates them with RMSE and MAPE
-4. Explicitly tests whether the model is fair to **rare vehicle makes** (e.g. Porsche, Jaguar, Land Rover) and corrects for imbalance using SMOTE-NC and sample weighting
-5. Explains predictions with SHAP
-6. Deploys the winning model as an interactive **Streamlit** web app
+Three model comparison — Linear Regression, Random Forest, and XGBoost with hyperparameter tuning
 
-## Live Demo
+Rare-segment fairness — explicit evaluation and correction for underrepresented vehicle makes (e.g., Porsche, Land Rover, Jaguar) using SMOTE-NC and sample weighting
 
-Try it here: **https://dimavehiclepriceprediction-mtn2sld8vphnzpwszk9xcw.streamlit.app/**
+Interpretable AI — SHAP values confirm predictions are driven by economically sensible features (mileage, age, make-model)
 
-Enter a car's make, model, condition, transmission, county, year of manufacture, and mileage, and the app returns an estimated price in Kenyan Shillings (KES).
+Production deployment — interactive web app with real-time feature engineering and input validation
 
-## Project Structure
+📊 Results at a Glance
+Model	RMSE (KES)	MAPE
+XGBoost + SMOTE-NC ⭐	526,613	13.84%
+XGBoost (tuned)	519,381	13.88%
+Random Forest (tuned)	519,321	14.23%
+Linear Regression (baseline)	916,218	24.70%
+Segment performance (final model):
 
-```
+Segment	Test Size	RMSE (KES)	MAPE
+Common makes	5,855	474,933	13.48%
+Rare makes	500	887,289	18.58%
+⭐ Selected model achieves the lowest overall MAPE and is deployed in the live app. SMOTE-NC narrows the rare-segment error gap but does not fully eliminate it.
+
+🏗️ Project Structure
+text
 .
-├── Second_Car_Price_Prediction.ipynb   # Full data science pipeline (cleaning → modeling → export)
-├── app.py                              # Streamlit deployment app                  # Raw dataset (see Dataset section)
-├── vehicle_price_model.pkl             # Trained model artifact (exported from notebook)
-├── vehicle_preprocessor.pkl            # Fitted preprocessing pipeline  *(see Note on Artifacts below)*
-├── make_model_encoding.pkl             # Make+Model target-encoding lookup  *(see Note on Artifacts below)*
+├── Second_Car_Price_Prediction.ipynb   # Full pipeline: cleaning → modeling → export
+├── app.py                              # Streamlit deployment app
+├── vehicle_price_model.pkl             # Trained XGBoost model (exported from notebook)
+├── vehicle_preprocessor.pkl            # Fitted preprocessing pipeline
+├── make_model_encoding.pkl             # Target-encoded Make+Model lookup table
 ├── requirements.txt                    # Python dependencies
 └── README.md
-```
+Note on artifacts: The .pkl files are exported from the notebook after training. Do not retrain unless you intend to modify the modeling approach.
 
+📁 Dataset
+Property	Value
+Source	Kenya Cars on Sale (Kaggle)
+Raw records	46,685 listings, 9 columns
+Final records	38,079 (after cleaning)
+Features	Price, Make, Model, YOM, Condition, Transmission, Mileage, Location, Color
+Price type	Asking prices (not confirmed transaction values)
+⚙️ Methodology
+1. Data Cleaning
+Removed 7,549 duplicate listings
 
-## Dataset
+Canonicalized inconsistent Make/Model spelling (case/whitespace variants, known brand mis-splits like "Land" → "Land Rover")
 
-- **Source:** [Kenya Cars on Sale](https://www.kaggle.com/datasets/rukwarop/kenya-cars-on-sale) (Kaggle), a secondary dataset of Kenyan used-vehicle listings
-- **Raw size:** 46,685 listings, 9 columns — `Price`, `Make`, `Model`, `YOM` (Year of Manufacture), `Color`, `Used` (condition), `Transmission`, `Mileage`, `Location`
-- **Note:** prices reflect **asking prices**, not confirmed transaction values
+Filtered 332 structurally corrupted rows (invalid year, condition, transmission, mileage, or price format)
 
-## Methodology
+Dropped 6,582 rows missing critical fields (Price, Make, Model, YOM, Mileage)
 
-### 1. Data Cleaning
-- Removed 7,549 duplicate listings
-- Canonicalized inconsistent Make/Model spelling (case/whitespace variants mapped to the most frequent spelling) and fixed known two-word brand mis-splits (e.g. "Land" → "Land Rover")
-- Filtered structurally corrupted rows (invalid year, condition, transmission, mileage, or price format) — 332 rows dropped (0.85%)
-- Dropped rows missing any of `Price`, `Make`, `Model`, `YOM`, or `Mileage` — 6,582 rows dropped (16.96%)
-- Capped prices at KES 10,000,000 and trimmed remaining outliers using an IQR filter on log-transformed price
+Capped prices at KES 10,000,000 and applied IQR-based outlier trimming on log-transformed prices
 
-### 2. Feature Engineering
-- `Car_Age` = current year − year of manufacture
-- `Mileage_Per_Year` = mileage ÷ car age
-- `Log_Price`, `Log_Mileage` — log1p transforms to correct right-skew
-- `MakeModel_TE` — target-encoded Make+Model combination, computed via **5-fold out-of-fold encoding** on the training set to prevent leakage
-- One-hot encoding for `Condition`, `Transmission`, `County`
+2. Feature Engineering
+Car_Age = current year − year of manufacture
 
-### 3. Model Training & Tuning
-| Model | Tuning method |
-|---|---|
-| Linear Regression | Baseline, no tuning |
-| Random Forest | `GridSearchCV` (3-fold) over `n_estimators`, `max_depth`, `min_samples_leaf` |
-| XGBoost | `BayesSearchCV` (scikit-optimize, 15 iterations, 3-fold) over `n_estimators`, `max_depth`, `learning_rate`, `subsample` |
+Mileage_Per_Year = mileage ÷ car age
 
-### 4. Rare-Segment Fairness
-Vehicle makes representing less than 2% of listings (7.69% of the dataset combined — Land Rover, Audi, Lexus, Ford, Daihatsu, Volvo, Peugeot, Jeep, Porsche, Mini, Jaguar, Hyundai, Kia, Chevrolet, Alfa Romeo) were evaluated separately from common makes. Two mitigations were tested:
-- **Sample weighting** — 3× weight on rare-make training errors
-- **SMOTE-NC** — synthetic oversampling of rare-make records (mixed categorical/continuous features)
+Log_Price, Log_Mileage — log1p transforms to correct right-skew
 
-### 5. Interpretability
-SHAP (`TreeExplainer`) values were computed on the tuned XGBoost model to confirm that predictions are driven by economically sensible features rather than spurious correlations.
+MakeModel_TE — 5-fold out-of-fold target encoding of Make+Model to prevent leakage
 
-## Results
+One-hot encoding for Condition, Transmission, County
 
-Evaluated on a 20% holdout test set (RMSE and MAPE computed on actual, non-log-transformed KES prices):
+3. Model Training & Tuning
+Model	Tuning Strategy
+Linear Regression	Baseline (no tuning)
+Random Forest	GridSearchCV (3-fold) over n_estimators, max_depth, min_samples_leaf
+XGBoost	BayesSearchCV (scikit-optimize, 15 iterations, 3-fold) over n_estimators, max_depth, learning_rate, subsample
+4. Rare-Segment Fairness
+Vehicle makes representing < 2% of listings (Land Rover, Audi, Lexus, Ford, Daihatsu, Volvo, Peugeot, Jeep, Porsche, Mini, Jaguar, Hyundai, Kia, Chevrolet, Alfa Romeo) were evaluated separately. Two mitigations tested:
 
-| Model | RMSE (KES) | MAPE |
-|---|---:|---:|
-| **XGBoost (SMOTE-NC)** ⭐ | **526,613** | **13.84%** |
-| XGBoost (tuned) | 519,381 | 13.88% |
-| XGBoost (rare-weighted) | 522,768 | 13.96% |
-| Random Forest (tuned) | 519,321 | 14.23% |
-| XGBoost (untuned) | 545,448 | 14.92% |
-| Random Forest (untuned) | 526,809 | 14.98% |
-| Linear Regression (baseline) | 916,218 | 24.70% |
+Sample weighting — 3× weight on rare-make training errors
 
-⭐ **Selected model** — lowest MAPE overall, deployed in the live app.
+SMOTE-NC — synthetic oversampling for mixed categorical/continuous features
 
-**Segment-level performance (final model):**
+5. Interpretability
+SHAP (TreeExplainer) values computed on the tuned XGBoost model confirm that predictions are driven by mileage, vehicle age, and make-model — economically rational features rather than spurious correlations.
 
-| Segment | n (test set) | RMSE (KES) | MAPE |
-|---|---:|---:|---:|
-| Common makes | 5,855 | 474,933 | 13.48% |
-| Rare makes | 500 | 887,289 | 18.58% |
-
-**Statistical significance (5-fold CV, tuned Random Forest vs. tuned XGBoost):**
-t = −1.973, p = 0.120 → no statistically significant difference between the two tuned ensemble models on cross-validated RMSE.
-
-## How to Run Locally
-
-### 1. Clone the repository
-```bash
+🚀 How to Run Locally
+1. Clone the Repository
+bash
 git clone https://github.com/DimaLelo/Dima_Vehicle_Price_Prediction.git
 cd Dima_Vehicle_Price_Prediction
-```
-
-### 2. Set up a virtual environment
-```bash
+2. Set Up Virtual Environment
+bash
 python -m venv venv
-source venv/bin/activate      
-```
-
-### 3. Install dependencies
-```bash
+source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate     # Windows
+3. Install Dependencies
+bash
 pip install -r requirements.txt
-```
-
-### 4. Run the notebook (optional — to retrain the model)
-```bash
+4. (Optional) Retrain the Model
+bash
 jupyter notebook Second_Car_Price_Prediction.ipynb
-```
-
-### 5. Launch the app
-```bash
+5. Launch the App
+bash
 streamlit run app.py
-```
-The app will open at `http://localhost:8501`.
+The app opens at http://localhost:8501.
 
-## Tech Stack
+🛠️ Tech Stack
+Category	Technologies
+Language	Python 3.10+
+Data Processing	pandas, numpy
+Modeling	scikit-learn, XGBoost, scikit-optimize, imbalanced-learn (SMOTE-NC)
+Interpretability	SHAP
+Visualization	matplotlib, seaborn
+Deployment	Streamlit, Streamlit Community Cloud
+Serialization	joblib
+⚠️ Limitations
+Asking prices only — the dataset reflects listing prices, not confirmed transaction values
 
-- **Language:** Python 3.10+
-- **Data processing:** pandas, numpy
-- **Modeling:** scikit-learn, XGBoost, scikit-optimize (Bayesian tuning), imbalanced-learn (SMOTE-NC)
-- **Interpretability:** SHAP
-- **Visualization:** matplotlib, seaborn
-- **Deployment:** Streamlit, Streamlit Community Cloud
-- **Serialization:** joblib
+Unverified provenance — the underlying platforms and dealers sourcing the listings are undisclosed
 
-## Limitations
+Rare-segment error — predictions for uncommon makes remain less accurate (18.58% MAPE vs. 13.48% for common makes)
 
-- Prices are **asking prices** from online listings, not confirmed transaction prices
-- The underlying dataset does not disclose which specific listing platforms or dealers the records originated from
-- Rare-make predictions remain meaningfully less accurate (18.58% MAPE) than common-make predictions (13.48% MAPE), despite oversampling
-- The model does not account for vehicle condition beyond "Foreign Used" / "Local Used" (e.g. no accident history, service records, or interior/exterior condition)
+Limited condition data — no accident history, service records, or mechanical inspection data
 
-## Future Work
+🔮 Future Work
+Integrate transaction-level data from dealerships and marketplaces
 
-- Incorporate transaction-level (not just asking-price) data where available
-- Add equipment/trim-level features (e.g. sunroof, leather seats, infotainment)
-- Expand geographic coverage beyond well-represented counties
-- Add confidence intervals around point predictions
+Add equipment/trim-level features (sunroof, leather seats, infotainment)
 
-## Author
-**<Dima Daki>**📧 <daksilel@gmail.com>
+Expand geographic coverage to rural and semi-urban counties
 
-## Acknowledgments
+Incorporate macroeconomic indicators (KES/USD exchange rate, fuel prices, import duties)
 
-- Dataset: [Kenya Cars on Sale](https://www.kaggle.com/datasets/rukwarop/kenya-cars-on-sale) by rukwarop, via Kaggle
-- Built with [Streamlit](https://streamlit.io/) and [XGBoost](https://xgboost.readthedocs.io/)
+Explore deep learning architectures (entity embeddings, stacking ensembles)
 
-## License
+Add prediction confidence intervals to the app output
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+📄 License
+This project is licensed under the MIT License — see the LICENSE file for details.
+
+👤 Author
+Dima Daki
+📧 daksilel@gmail.com
+🔗 GitHub
+
+🙏 Acknowledgments
+Dataset: Kenya Cars on Sale by rukwarop (Kaggle)
+
+Built with Streamlit and XGBoost
