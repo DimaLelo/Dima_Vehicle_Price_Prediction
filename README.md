@@ -34,8 +34,7 @@ Enter a car's make, model, condition, transmission, county, year of manufacture,
 ```
 .
 ├── Second_Car_Price_Prediction.ipynb   # Full data science pipeline (cleaning → modeling → export)
-├── app.py                              # Streamlit deployment app
-├── Vehicle_Data.xlsx                   # Raw dataset (see Dataset section)
+├── app.py                              # Streamlit deployment app                  # Raw dataset (see Dataset section)
 ├── vehicle_price_model.pkl             # Trained model artifact (exported from notebook)
 ├── vehicle_preprocessor.pkl            # Fitted preprocessing pipeline  *(see Note on Artifacts below)*
 ├── make_model_encoding.pkl             # Make+Model target-encoding lookup  *(see Note on Artifacts below)*
@@ -43,11 +42,6 @@ Enter a car's make, model, condition, transmission, county, year of manufacture,
 └── README.md
 ```
 
-> ⚠️ **Note on model artifacts.** The notebook's final cell currently saves a single combined object:
-> ```python
-> joblib.dump(best_pipe, "vehicle_price_model.pkl")
-> ```
-> `best_pipe` is an sklearn `Pipeline` containing *both* the preprocessor and the regressor. `app.py`, however, expects three **separate** files — `vehicle_price_model.pkl` (regressor only), `vehicle_preprocessor.pkl` (the `ColumnTransformer`), and `make_model_encoding.pkl` (a dict of `{"means": {...}, "global_mean": float}` for the target-encoded Make+Model lookup). If your deployed app is working, you already have an export step that produces these three files separately (not shown in the uploaded notebook) — it's worth adding that cell back into the notebook so the repo is self-contained and reproducible end-to-end.
 
 ## Dataset
 
@@ -168,7 +162,7 @@ The app will open at `http://localhost:8501`.
 
 ## Author
 
-**<Dima Daki>*
+**<Dima Daki>**
 📧 <daksilel@gmail.com>
 
 ## Acknowledgments
