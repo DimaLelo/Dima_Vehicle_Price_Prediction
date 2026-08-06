@@ -162,7 +162,7 @@ The app will open at `http://localhost:8501`.
 
 ## Author
 
-**<Dima Daki>**
+<Dima Daki>
 📧 <daksilel@gmail.com>
 
 ## Acknowledgments
