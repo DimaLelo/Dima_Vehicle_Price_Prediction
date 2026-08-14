@@ -45,9 +45,10 @@ This project delivers a model that predicts vehicle prices with ~13.84% MAPE, pr
 ```
 .
 ├── Screenshots/                        # App screenshots for the README
-├── Second_Car_Price_Prediction.ipynb   # Full pipeline: cleaning → modeling → export
+├── Car_Price_Prediction.ipynb   # Full pipeline: cleaning → modeling → export
 ├── Research_Proposal.pdf               # Project research proposal
 ├── app.py                              # Streamlit deployment app
+├── Vehicle_Data                         # Dataset Used
 ├── vehicle_price_model.pkl             # Trained XGBoost model (exported from notebook)
 ├── vehicle_preprocessor.pkl            # Fitted preprocessing pipeline
 ├── make_model_encoding.pkl             # Target-encoded Make+Model lookup table
@@ -120,7 +121,7 @@ pip install -r requirements.txt
 
 **4. (Optional) Retrain the model**
 ```bash
-jupyter notebook Second_Car_Price_Prediction.ipynb
+jupyter notebook Car_Price_Prediction.ipynb
 ```
 
 **5. Launch the app**
