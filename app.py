@@ -16,7 +16,7 @@ st.set_page_config(
 
 
 # VISUAL IDENTITY — "NAIROBI DUSK"
-.
+
 
 st.markdown(
     """
