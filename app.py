@@ -16,9 +16,7 @@ st.set_page_config(
 
 
 # VISUAL IDENTITY — "NAIROBI DUSK"
-# Palette: deep charcoal-teal ground, marigold amber signal,
-# savanna-teal secondary, warm cream text. A dashed road-line
-# is the signature motif, standing in for dividers throughout.
+.
 
 st.markdown(
     """
@@ -284,6 +282,52 @@ global_mean = encoding_data["global_mean"]
 
 
 
+# VALID INPUT CATEGORIES — derived from the trained artifacts themselves
+#
+# Condition / Transmission / County are read straight off the fitted
+# OneHotEncoder inside the saved preprocessor, in the same column order
+# it was fit with during training (CATEGORICAL = ["Condition",
+# "Transmission", "County"]). This guarantees the dropdown options can
+# never drift out of sync with what the notebook actually trained on —
+# no category is hand-typed here.
+#
+# Make / Model are derived from the keys of the target-encoding
+# dictionary (each key is "Make_Model"), so the same guarantee holds
+# for the high-cardinality make-model field.
+
+@st.cache_data
+def get_category_options(_preprocessor, _make_model_means):
+
+    cat_encoder = _preprocessor.named_transformers_["cat"]
+    condition_options = sorted(cat_encoder.categories_[0].tolist())
+    
+    condition_options = [c for c in condition_options if c.strip().lower() != "brand new"]
+    transmission_options = sorted(cat_encoder.categories_[1].tolist())
+    county_options = sorted(cat_encoder.categories_[2].tolist())
+
+    make_to_models = {}
+    for key in _make_model_means.keys():
+        if "_" not in key:
+            continue
+        make_key, model_key = key.split("_", 1)
+        make_to_models.setdefault(make_key, set()).add(model_key)
+
+    make_options = sorted(make_to_models.keys())
+    make_to_models = {m: sorted(models) for m, models in make_to_models.items()}
+
+    return condition_options, transmission_options, county_options, make_options, make_to_models
+
+
+(
+    condition_options,
+    transmission_options,
+    county_options,
+    make_options,
+    make_to_models,
+) = get_category_options(preprocessor, make_model_means)
+
+
+
 # PAGE TITLE
 
 st.markdown('<span class="hero-badge">NAIROBI · KES PRICING MODEL</span>', unsafe_allow_html=True)
@@ -300,6 +344,9 @@ st.markdown("<hr>", unsafe_allow_html=True)
 
 
 # VEHICLE INFORMATION
+# Make, Model, Condition, Transmission, and County are all categorical
+# fields in the training data, so each is presented as a constrained
+# dropdown — no free text is accepted for any of them.
 
 st.markdown('<span class="eyebrow">STEP · IDENTIFY THE CAR</span>', unsafe_allow_html=True)
 st.subheader("Vehicle Information")
@@ -307,15 +354,21 @@ st.subheader("Vehicle Information")
 col_a, col_b = st.columns(2)
 
 with col_a:
-    make = st.text_input(
+    make = st.selectbox(
         "Car Make",
-        placeholder="e.g. Toyota"
+        options=make_options,
+        index=None,
+        placeholder="Select a make"
     )
 
 with col_b:
-    model_name = st.text_input(
+    models_for_make = make_to_models.get(make, []) if make else []
+    model_name = st.selectbox(
         "Car Model",
-        placeholder="e.g. Corolla"
+        options=models_for_make,
+        index=None,
+        placeholder="Select a make first" if not make else "Select a model",
+        disabled=not make
     )
 
 col_c, col_d = st.columns(2)
@@ -323,29 +376,27 @@ col_c, col_d = st.columns(2)
 with col_c:
     condition = st.selectbox(
         "Condition",
-        [
-            "Foreign Used",
-            "Local Used",
-        ]
+        options=condition_options
     )
 
 with col_d:
     transmission = st.selectbox(
         "Transmission",
-        [
-            "Automatic",
-            "Manual"
-        ]
+        options=transmission_options
     )
 
-county = st.text_input(
+county = st.selectbox(
     "County",
-    placeholder="e.g. Nairobi"
+    options=county_options,
+    index=None,
+    placeholder="Select a county"
 )
 
 
 
 # VEHICLE AGE AND MILEAGE
+# Year of Manufacture and Mileage are numeric fields in the training
+# data, so both are number-only inputs — no text entry is possible.
 
 st.markdown('<span class="eyebrow">STEP · USAGE DETAILS</span>', unsafe_allow_html=True)
 st.subheader("Vehicle Details")
@@ -358,7 +409,8 @@ with col_e:
         min_value=1960,
         max_value=2026,
         value=2018,
-        step=1
+        step=1,
+        format="%d"
     )
 
 with col_f:
@@ -367,7 +419,8 @@ with col_f:
         min_value=0,
         max_value=1000000,
         value=80000,
-        step=1000
+        step=1000,
+        format="%d"
     )
 
 
@@ -387,23 +440,23 @@ if st.button(
     # Validate required inputs
     
 
-    if not make.strip():
+    if not make:
 
-        st.warning("Please enter the car make.")
-
-        st.stop()
-
-
-    if not model_name.strip():
-
-        st.warning("Please enter the car model.")
+        st.warning("Please select the car make.")
 
         st.stop()
 
 
-    if not county.strip():
+    if not model_name:
 
-        st.warning("Please enter the county.")
+        st.warning("Please select the car model.")
+
+        st.stop()
+
+
+    if not county:
+
+        st.warning("Please select the county.")
 
         st.stop()
 
@@ -425,10 +478,12 @@ if st.button(
 
   
     # CREATE MAKE + MODEL FEATURE
-    
-    make_clean = make.strip()
+    # Both make and model_name come straight from the dropdowns above,
+    # so they are already valid, exact-match training categories —
+   
+    make_clean = make
 
-    model_clean = model_name.strip()
+    model_clean = model_name
 
     make_model = (
         make_clean
@@ -478,7 +533,7 @@ if st.button(
         ],
 
         "County": [
-            county.strip()
+            county
         ]
     })
 
@@ -591,7 +646,7 @@ if st.button(
         st.markdown(
             f"""
             <div class="detail-card">
-                <p><b>County:</b> {county.strip()}</p>
+                <p><b>County:</b> {county}</p>
                 <p><b>Year:</b> {yom}</p>
                 <p><b>Mileage:</b> {mileage:,.0f} km</p>
                 <p><b>Vehicle Age:</b> {car_age} years</p>
@@ -603,6 +658,6 @@ if st.button(
 
     st.info(
         "The prediction is generated using the "
-        "XGBoost (SMOTE-NC) model trained in the "
+        "tuned XGBoost model trained in the "
         "vehicle price prediction notebook."
     )
