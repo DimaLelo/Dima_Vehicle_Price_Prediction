@@ -15,7 +15,7 @@ Kenya's used-vehicle market is dominated by second-hand imports, but pricing rem
 - **Valuation risk** lenders using vehicles as loan collateral have no reliable way to verify a fair market value
 - **Market inefficiency** prolonged negotiation and mistrust between parties
 
-This project delivers a model that predicts vehicle prices with ~13.78% MAPE, providing a transparent anchor for negotiation and lending decisions.
+This project delivers a model that predicts vehicle prices , providing a transparent anchor for negotiation and lending decisions since there no standardize benchmark.
 
 ## Key Features
 - **End-to-end pipeline**  from raw data cleaning to a deployed Streamlit app
