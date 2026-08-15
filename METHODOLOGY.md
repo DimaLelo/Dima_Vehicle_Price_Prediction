@@ -14,23 +14,23 @@
 
 ### 1. Data Cleaning
 
-- **Removed 7,549 duplicate listings** — exact row repeats, likely from web scraping re-runs
-- **Canonicalized Make/Model spelling** — mapped case/whitespace variants to their most frequent spelling (e.g., "BMW", "Bmw", "bmw" all → "BMW")
-- **Fixed known brand mis-splits** — two-word makes incorrectly split at the space during scraping ("Land" → "Land Rover", "Alfa" → "Alfa Romeo")
-- **Filtered 332 structurally corrupted rows** (0.85%) — values in wrong columns (e.g., price strings in Model field), detected via validation rules before parsing
+- **Removed 7,549 duplicate listings** —xact row repeats, likely from web scraping re-runs
+- **Canonicalized Make/Model spelling**  mapped case/whitespace variants to their most frequent spelling (e.g., "BMW", "Bmw", "bmw" all → "BMW")
+- **Fixed known brand mis-splits** two-word makes incorrectly split at the space during scraping ("Land" → "Land Rover", "Alfa" → "Alfa Romeo")
+- **Filtered 332 structurally corrupted rows** (0.85%)  values in wrong columns (e.g., price strings in Model field), detected via validation rules before parsing
 - **Dropped 6,582 rows missing critical fields** (Mileage had the highest missingness at 16.96%)
 - **Price capping** — removed 394 rows with prices > KES 10,000,000 to reduce outlier influence
-- **IQR outlier trimming on log scale** — removed 55 rows outside 1.5×IQR bounds of log-transformed prices
+- **IQR outlier trimming on log scale** removed 55 rows outside 1.5×IQR bounds of log-transformed prices
 
-**Final row count:** 31,773
+
 
 ### 2. Feature Engineering
 
 **Numeric features:**
-- `Car_Age` = 2026 − year of manufacture
+- `Car_Age` = 2026 year of manufacture
 - `Mileage_Per_Year` = mileage ÷ car age
-- `Log_Price`, `Log_Mileage` — log1p transforms to correct right-skewed distributions
-- `MakeModel_TE` — 5-fold out-of-fold target encoding of Make + Model concatenated, to prevent train/test leakage while encoding a high-cardinality categorical
+- `Log_Price`, `Log_Mileage`  log1p transforms to correct right-skewed distributions
+- `MakeModel_TE` 5-fold out-of-fold target encoding of Make + Model concatenated, to prevent train/test leakage while encoding a high-cardinality categorical
 
 **Categorical features:**
 - `Condition` (Foreign Used, Kenyan Used, Brand New) — one-hot encoded
@@ -84,7 +84,7 @@ A paired-samples t-test on 5-fold cross-validation RMSE for tuned Random Forest 
 - XGB CV-RMSE: 0.1983 ± 0.0039
 - **t-statistic: -1.973**
 - **p-value: 0.1198**
-- **Result: No statistically significant difference** (p > 0.05)
+- 
 
 Despite RF's marginally lower CV RMSE, XGBoost + SMOTE-NC was selected for deployment because:
 1. Holdout MAPE (13.78%) is lower than RF (14.23%)
