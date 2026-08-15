@@ -257,17 +257,12 @@ st.markdown(
 
 @st.cache_resource
 def load_models():
-
+    """Load the trained XGBoost + SMOTE-NC model and preprocessing pipeline."""
+    
     model = joblib.load("vehicle_price_model.pkl")
-
-    preprocessor = joblib.load(
-        "vehicle_preprocessor.pkl"
-    )
-
-    encoding_data = joblib.load(
-        "make_model_encoding.pkl"
-    )
-
+    preprocessor = joblib.load("vehicle_preprocessor.pkl")
+    encoding_data = joblib.load("make_model_encoding.pkl")
+    
     return model, preprocessor, encoding_data
 
 
@@ -276,45 +271,38 @@ model, preprocessor, encoding_data = load_models()
 
 
 # TARGET ENCODING DATA
+# Matches the notebook's make_model target encoding dictionary
 
 make_model_means = encoding_data["means"]
 global_mean = encoding_data["global_mean"]
 
 
 
-# VALID INPUT CATEGORIES — derived from the trained artifacts themselves
-#
-# Condition / Transmission / County are read straight off the fitted
-# OneHotEncoder inside the saved preprocessor, in the same column order
-# it was fit with during training (CATEGORICAL = ["Condition",
-# "Transmission", "County"]). This guarantees the dropdown options can
-# never drift out of sync with what the notebook actually trained on —
-# no category is hand-typed here.
-#
-# Make / Model are derived from the keys of the target-encoding
-# dictionary (each key is "Make_Model"), so the same guarantee holds
-# for the high-cardinality make-model field.
+# VALID INPUT CATEGORIES
+# Derived from the fitted preprocessor to ensure consistency with training data.
+# Condition, Transmission, and County come from the OneHotEncoder; 
+# Make/Model come from the target encoding dictionary keys.
 
 @st.cache_data
 def get_category_options(_preprocessor, _make_model_means):
-
+    """Extract valid categories from the trained preprocessing pipeline."""
+    
     cat_encoder = _preprocessor.named_transformers_["cat"]
     condition_options = sorted(cat_encoder.categories_[0].tolist())
-    
-    condition_options = [c for c in condition_options if c.strip().lower() != "brand new"]
     transmission_options = sorted(cat_encoder.categories_[1].tolist())
     county_options = sorted(cat_encoder.categories_[2].tolist())
-
+    
+    # Build Make → Models mapping from target encoding dictionary
     make_to_models = {}
     for key in _make_model_means.keys():
         if "_" not in key:
             continue
         make_key, model_key = key.split("_", 1)
         make_to_models.setdefault(make_key, set()).add(model_key)
-
+    
     make_options = sorted(make_to_models.keys())
     make_to_models = {m: sorted(models) for m, models in make_to_models.items()}
-
+    
     return condition_options, transmission_options, county_options, make_options, make_to_models
 
 
@@ -331,7 +319,6 @@ def get_category_options(_preprocessor, _make_model_means):
 # PAGE TITLE
 
 st.markdown('<span class="hero-badge">NAIROBI · KES PRICING MODEL</span>', unsafe_allow_html=True)
-
 st.title("🚗 Kenya Used Car Price Predictor")
 
 st.write(
@@ -344,9 +331,8 @@ st.markdown("<hr>", unsafe_allow_html=True)
 
 
 # VEHICLE INFORMATION
-# Make, Model, Condition, Transmission, and County are all categorical
-# fields in the training data, so each is presented as a constrained
-# dropdown — no free text is accepted for any of them.
+# Make, Model, Condition, Transmission, and County are categorical inputs
+# extracted from the training data categories, so each is a constrained dropdown.
 
 st.markdown('<span class="eyebrow">STEP · IDENTIFY THE CAR</span>', unsafe_allow_html=True)
 st.subheader("Vehicle Information")
@@ -376,13 +362,17 @@ col_c, col_d = st.columns(2)
 with col_c:
     condition = st.selectbox(
         "Condition",
-        options=condition_options
+        options=condition_options,
+        index=None,
+        placeholder="Select a condition"
     )
 
 with col_d:
     transmission = st.selectbox(
         "Transmission",
-        options=transmission_options
+        options=transmission_options,
+        index=None,
+        placeholder="Select a transmission"
     )
 
 county = st.selectbox(
@@ -395,8 +385,8 @@ county = st.selectbox(
 
 
 # VEHICLE AGE AND MILEAGE
-# Year of Manufacture and Mileage are numeric fields in the training
-# data, so both are number-only inputs — no text entry is possible.
+# Year of Manufacture and Mileage are numeric inputs that feed into
+# Car_Age and Log_Mileage features in the notebook.
 
 st.markdown('<span class="eyebrow">STEP · USAGE DETAILS</span>', unsafe_allow_html=True)
 st.subheader("Vehicle Details")
@@ -436,174 +426,98 @@ if st.button(
     use_container_width=True
 ):
 
-  
     # Validate required inputs
     
-
     if not make:
-
         st.warning("Please select the car make.")
-
         st.stop()
-
-
-    if not model_name:
-
-        st.warning("Please select the car model.")
-
-        st.stop()
-
-
-    if not county:
-
-        st.warning("Please select the county.")
-
-        st.stop()
-
-
-    # --------------------------------------------------------
-    # FEATURE ENGINEERING
     
-
+    if not model_name:
+        st.warning("Please select the car model.")
+        st.stop()
+    
+    if not condition:
+        st.warning("Please select the condition.")
+        st.stop()
+    
+    if not transmission:
+        st.warning("Please select the transmission.")
+        st.stop()
+    
+    if not county:
+        st.warning("Please select the county.")
+        st.stop()
+    
+    
+    # --------------------------------------------------------
+    # FEATURE ENGINEERING — matches the notebook exactly
+    
     CURRENT_YEAR = 2026
-
+    
     car_age = CURRENT_YEAR - yom
-
     log_mileage = np.log1p(mileage)
-
-    mileage_per_year = (
-        mileage / max(car_age, 1)
-    )
-
-
-  
+    mileage_per_year = mileage / max(car_age, 1)
+    
+    
     # CREATE MAKE + MODEL FEATURE
-    # Both make and model_name come straight from the dropdowns above,
-    # so they are already valid, exact-match training categories —
-   
-    make_clean = make
-
-    model_clean = model_name
-
-    make_model = (
-        make_clean
-        + "_"
-        + model_clean
-    )
-
-
+    # Both come from dropdowns, so they are guaranteed to be valid.
+    
+    make_model = make + "_" + model_name
+    
     
     # MAKE + MODEL TARGET ENCODING
-   
-
-    make_model_te = make_model_means.get(
-        make_model,
-        global_mean
-    )
-
-
+    # Falls back to global mean if the exact make-model wasn't in training.
+    
+    make_model_te = make_model_means.get(make_model, global_mean)
+    
     
     # CREATE INPUT DATAFRAME
+    # Feature order must match training: numeric first, then categorical.
     
-
     input_data = pd.DataFrame({
-
-        "Car_Age": [
-            car_age
-        ],
-
-        "Log_Mileage": [
-            log_mileage
-        ],
-
-        "Mileage_Per_Year": [
-            mileage_per_year
-        ],
-
-        "MakeModel_TE": [
-            make_model_te
-        ],
-
-        "Condition": [
-            condition
-        ],
-
-        "Transmission": [
-            transmission
-        ],
-
-        "County": [
-            county
-        ]
+        "Car_Age": [car_age],
+        "Log_Mileage": [log_mileage],
+        "Mileage_Per_Year": [mileage_per_year],
+        "MakeModel_TE": [make_model_te],
+        "Condition": [condition],
+        "Transmission": [transmission],
+        "County": [county]
     })
-
-
-   
-    # APPLY THE SAVED PREPROCESSOR
     
-
+    
+    # APPLY THE SAVED PREPROCESSOR
+    # Handles categorical one-hot encoding and passthrough of numerics.
+    
     try:
-
-        input_processed = preprocessor.transform(
-            input_data
-        )
-
+        input_processed = preprocessor.transform(input_data)
     except Exception as e:
-
-        st.error(
-            "There was a problem processing the vehicle "
-            "information."
-        )
-
+        st.error("There was a problem processing the vehicle information.")
         st.exception(e)
-
         st.stop()
-
-
+    
     
     # MODEL PREDICTION
-   
-
+    # XGBoost + SMOTE-NC model predicts log-transformed price.
+    
     try:
-
-        predicted_log_price = model.predict(
-            input_processed
-        )[0]
-
-        predicted_price = np.expm1(
-            predicted_log_price
-        )
-
+        predicted_log_price = model.predict(input_processed)[0]
+        predicted_price = np.expm1(predicted_log_price)
     except Exception as e:
-
-        st.error(
-            "There was a problem generating the prediction."
-        )
-
+        st.error("There was a problem generating the prediction.")
         st.exception(e)
-
         st.stop()
-
-
     
     
-# SAFETY CHECK
+    # SAFETY CHECK
     
-    # -------------------------------------------
-
     if not np.isfinite(predicted_price):
-
-        st.error(
-            "The model returned an invalid prediction."
-        )
-
+        st.error("The model returned an invalid prediction.")
         st.stop()
-
-
+    
     if predicted_price < 0:
-
         predicted_price = 0
-   
+    
+    
     # DISPLAY PREDICTION
 
     st.markdown(
@@ -616,24 +530,21 @@ if st.button(
         unsafe_allow_html=True
     )
 
-
-    # SHOW INPUT SUMMARY
     
+    # SHOW INPUT SUMMARY
 
     st.markdown("<hr>", unsafe_allow_html=True)
-
     st.markdown('<span class="eyebrow">SUMMARY</span>', unsafe_allow_html=True)
     st.subheader("Prediction Details")
 
     col1, col2 = st.columns(2)
 
     with col1:
-
         st.markdown(
             f"""
             <div class="detail-card">
-                <p><b>Make:</b> {make_clean}</p>
-                <p><b>Model:</b> {model_clean}</p>
+                <p><b>Make:</b> {make}</p>
+                <p><b>Model:</b> {model_name}</p>
                 <p><b>Condition:</b> {condition}</p>
                 <p><b>Transmission:</b> {transmission}</p>
             </div>
@@ -642,7 +553,6 @@ if st.button(
         )
 
     with col2:
-
         st.markdown(
             f"""
             <div class="detail-card">
@@ -655,9 +565,9 @@ if st.button(
             unsafe_allow_html=True
         )
 
-
     st.info(
-        "The prediction is generated using the "
-        "tuned XGBoost model trained in the "
-        "vehicle price prediction notebook."
+        "The prediction is generated using the tuned XGBoost + SMOTE-NC model "
+        "trained in the vehicle price prediction notebook. This model achieves "
+        "13.78% MAPE on the test set and is optimized for both common and rare "
+        "vehicle segments."
     )
