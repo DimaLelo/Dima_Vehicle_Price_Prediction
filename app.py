@@ -289,6 +289,8 @@ def get_category_options(_preprocessor, _make_model_means):
     
     cat_encoder = _preprocessor.named_transformers_["cat"]
     condition_options = sorted(cat_encoder.categories_[0].tolist())
+    # Remove "Brand New" — only used/foreign used vehicles
+    condition_options = [c for c in condition_options if c.strip().lower() != "brand new"]
     transmission_options = sorted(cat_encoder.categories_[1].tolist())
     county_options = sorted(cat_encoder.categories_[2].tolist())
     
@@ -567,7 +569,5 @@ if st.button(
 
     st.info(
         "The prediction is generated using the tuned XGBoost + SMOTE-NC model "
-        "trained in the vehicle price prediction notebook. This model achieves "
-        "13.78% MAPE on the test set and is optimized for both common and rare "
-        "vehicle segments."
+        
     )
