@@ -11,18 +11,18 @@ An end-to-end machine learning pipeline that estimates fair market prices for us
 ## Problem Statement
 Kenya's used-vehicle market is dominated by second-hand imports, but pricing remains largely informal and negotiation-driven — there is no shared, data-backed benchmark for what a given vehicle is actually worth. This leads to:
 
-- **Information asymmetry** — sellers and buyers each anchor on different, often unfounded, price expectations
-- **Valuation risk** — lenders using vehicles as loan collateral have no reliable way to verify a fair market value
-- **Market inefficiency** — prolonged negotiation and mistrust between parties
+- **Information asymmetry** sellers and buyers each anchor on different, often unfounded, price expectations
+- **Valuation risk** lenders using vehicles as loan collateral have no reliable way to verify a fair market value
+- **Market inefficiency** prolonged negotiation and mistrust between parties
 
 This project delivers a model that predicts vehicle prices with ~13.78% MAPE, providing a transparent anchor for negotiation and lending decisions.
 
 ## Key Features
-- **End-to-end pipeline** — from raw data cleaning to a deployed Streamlit app
-- **Three-model comparison** — Linear Regression, Random Forest, and XGBoost, with hyperparameter tuning
-- **Rare-segment fairness** — explicit evaluation and correction for underrepresented vehicle makes using SMOTE-NC and sample weighting
-- **Interpretable AI** — SHAP values confirm predictions are driven by economically sensible features (mileage, age, make-model)
-- **Production deployment** — interactive web app with real-time feature engineering and input validation
+- **End-to-end pipeline**  from raw data cleaning to a deployed Streamlit app
+- **Three-model comparison** Linear Regression, Random Forest, and XGBoost, with hyperparameter tuning
+- **Rare-segment fairness** explicit evaluation and correction for underrepresented vehicle makes using SMOTE-NC and sample weighting
+- **Interpretable AI**  SHAP values confirm predictions are driven by economically sensible features (mileage, age, make-model)
+- **Production deployment** interactive web app with real-time feature engineering and input validation
 
 ## Results at a Glance
 | Model | RMSE (KES) | MAPE |
@@ -88,7 +88,7 @@ pip install xgboost shap imbalanced-learn scikit-optimize openpyxl
 ```bash
 jupyter notebook Second_Car_Price_Prediction_.ipynb
 ```
-Use "Restart & Run All" (Jupyter) or "Runtime > Run all" (Colab) to ensure all dependencies are created before later cells run. Do not run cells individually or out of order.
+
 
 **3. Expect hyperparameter tuning to be slow**
 The "Hyperparametr Tuning" cell (GridSearchCV for Random Forest + BayesSearchCV for XGBoost) can take several minutes. Do not interrupt it.
@@ -104,7 +104,7 @@ The "Hyperparametr Tuning" cell (GridSearchCV for Random Forest + BayesSearchCV 
 | Paired t-test | t ≈ -1.973, p ≈ 0.120 |
 | Rare-segment MAPE | Common ≈ 13.48% · Rare ≈ 18.58% |
 
-Since `RANDOM_STATE = 42` is fixed throughout, these numbers should reproduce exactly.
+
 
 ## License
 This project is licensed under the MIT License — see the `LICENSE` file for details.
