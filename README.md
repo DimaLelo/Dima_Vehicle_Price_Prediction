@@ -9,7 +9,7 @@ An end-to-end machine learning pipeline that estimates fair market prices for us
 **Live App:** https://dimavehiclepriceprediction-mtn2sld8vphnzpwszk9xcw.streamlit.app/
 
 ## Problem Statement
-Kenya's used-vehicle market is dominated by second-hand imports, but pricing remains largely informal and negotiation-driven — there is no shared, data-backed benchmark for what a given vehicle is actually worth. This leads to:
+Kenya's used-vehicle market is dominated by second-hand imports, but pricing remains largely informal and negotiation-driven there is no shared, data-backed benchmark for what a given vehicle is actually worth. This leads to:
 
 - **Information asymmetry** sellers and buyers each anchor on different, often unfounded, price expectations
 - **Valuation risk** lenders using vehicles as loan collateral have no reliable way to verify a fair market value
@@ -33,7 +33,7 @@ This project delivers a model that predicts vehicle prices , providing a transpa
 | Random Forest (tuned) | 519,321 | 14.23% |
 | Linear Regression (baseline) | 916,218 | 24.70% |
 
-**Model selection:** A paired-samples t-test on 5-fold cross-validation RMSE found no statistically significant difference between tuned Random Forest and tuned XGBoost (t = -1.973, p = 0.120). XGBoost + SMOTE-NC was selected as the final model based on holdout MAPE and rare-segment equity.
+**Model selection:** A paired-samples t-test on 5-fold cross-validation . XGBoost + SMOTE-NC was selected as the final model based on holdout MAPE and rare-segment equity.
 
 
 
